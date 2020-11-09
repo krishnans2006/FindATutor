@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up - Find A Tutor!{% endblock title %}
+
+{% block css %}
+{% endblock css %}
+
+{% block content %}
+    <form method="post">
+        <input 
+            type="text" 
+            id="fname" 
+            name="fname" 
+            placeholder="John" 
+            maxlength=120 
+            required />
+        <input 
+            type="text" 
+            id="lname" 
+            name="lname" 
+            placeholder="Doe" 
+            maxlength=120 
+            required />
+        <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            placeholder="example@domain.com" 
+            maxlength=120 
+            required />
+        <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            placeholder="P@$$W0RD" 
+            maxlength=120 
+            required />
+        <input type="submit" value="Sign Up" />
+    </form>
+{% endblock content %}

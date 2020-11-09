@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Log In - Find A Tutor!{% endblock title %}
+
+{% block css %}
+{% endblock css %}
+
+{% block content %}
+    <form method="post">
+        <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            placeholder="example@domain.com" 
+            maxlength=120 
+            required />
+        <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            placeholder="P@$$W0RD" 
+            maxlength=120 
+            required />
+        <input type="submit" value="Log In" />
+        <input type="checkbox" id="rememberme" name="rememberme" />
+        <label for="rememberme" class="check">Remember Me</label>
+    </form>
+{% endblock content %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}My Account - Find A Tutor!{% endblock title %}
+
+{% block css %}
+{% endblock css %}
+
+{% block content %}
+    <h1>Manage Your Account</h1>
+    <form method="post">
+        <input 
+            type="text" 
+            id="fname" 
+            name="fname" 
+            value="{{fname}}" 
+            maxlength=120 
+            required />
+        <input 
+            type="text" 
+            id="lname" 
+            name="lname" 
+            value="{{lname}}" 
+            maxlength=120 
+            required />
+        <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            value="{{email}}" 
+            maxlength=120 
+            disabled />
+        <input 
+            type="password" 
+            id="oldpassword" 
+            name="oldpassword" 
+            placeholder="Current Password" 
+            maxlength=120 
+            required />
+        <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            placeholder="New Password (Leave Blank to keep unchanged)" 
+            maxlength=120 />
+        <input type="submit" value="Update" />
+    </form>
+{% endblock content %}
