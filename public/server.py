@@ -169,7 +169,7 @@ def myaccount():
                 mail.send(msg)
                 matching_user.fname = fname
                 matching_user.lname = lname
-                matching_user.pwd = password
+                matching_user.pwd = password if password else matching_user.pwd
                 db.session.commit()
                 session["fname"] = fname
                 session["lname"] = lname
