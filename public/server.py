@@ -116,9 +116,9 @@ def register():
             msg = Message(
                 subject="Welcome to Find A Tutor!",
                 recipients=[email],
-                html=f"Thanks for registering as a user on Find A Tutor! Log In to get started! " + 
+                html="Thanks for registering as a user on Find A Tutor! Log In to get started! " + 
                     "<br><br>Once you log in, you will need to verify your email. " + 
-                    "Please do so by using the code '{code}'."
+                    f"Please do so by using the code '{code}'."
             )
             mail.send(msg)
             flash("You have successfully been registered, Log In and check your email to verify!")
