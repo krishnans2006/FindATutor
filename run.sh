@@ -3,6 +3,7 @@
 cd /site/public
 source venv/bin/activate
 
+git config credential.helper store
 git config user.name 'KrishnanS2006'
 git config user.password 'KsSh101606'
 git add --all
