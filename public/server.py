@@ -54,7 +54,7 @@ def regenerate_users(user):
     queried = user.query.all()
     users = []
     for user in queried:
-        users.append([user._id, user.fname, user.lname, user.email, user.pwd, user.confirmation])
+        users.append([user.id_, user.fname, user.lname, user.email, user.pwd, user.confirmation])
     return users
 
 users = regenerate_users(User)
@@ -79,7 +79,7 @@ def login():
         matching_user = User.query.filter_by(email=email).first()
         if matching_user and password == matching_user.pwd:
             session["user"] = [
-                matching_user._id, 
+                matching_user.id_, 
                 matching_user.fname, 
                 matching_user.lname, 
                 matching_user.email, 
@@ -173,7 +173,7 @@ def myaccount():
                 matching_user.pwd = password if password else matching_user.pwd
                 db.session.commit()
                 session["user"] = [
-                    matching_user._id, 
+                    matching_user.id_, 
                     matching_user.fname, 
                     matching_user.lname, 
                     matching_user.email, 
