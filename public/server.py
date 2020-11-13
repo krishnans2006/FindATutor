@@ -51,9 +51,9 @@ class User(db.Model):
 class Request(db.Model):
     id_ = db.Column("id", db.Integer, primary_key=True)
     asker_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    asker = db.relationship("User", backref=db.backref("posts", lazy=True))
+    asker = db.relationship("User", foreign_keys=[asker_id])
     tutor_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    tutor = db.relationship("User", backref=db.backref("posts", lazy=True))
+    tutor = db.relationship("User", foreign_keys=[tutor_id])
 
     def __repr__(self):
         return f"{self.asker} requests {self.tutor}"
