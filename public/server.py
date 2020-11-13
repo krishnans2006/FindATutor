@@ -38,6 +38,7 @@ class User(db.Model):
     email = db.Column(db.Text, unique=True, nullable=False)
     pwd = db.Column(db.Text, unique=True, nullable=False)
     confirmation = db.Column(db.Text)
+    values = [id_, fname, lname, email, pwd, confirmation]
 
     def __repr__(self):
         return f"{self.fname} {self.lname}"
@@ -50,21 +51,26 @@ def set_session_timeout(remember):
         app.permanent_session_lifetime = timedelta(minutes=20)
     session.modified = True
 
+def regenerate_users(user):
+    queried = user.query.all()
+    users = []
+    for user in queried:
+        users.append(user.values)
+    return users
+
+users = regenerate_users(User)
+
 @app.before_first_request
 def create_db():
     db.create_all()
 
 @app.route("/")
 def index():
-    return render_template("index.html", 
-        fname=session.get("fname"), 
-        lname=session.get("lname"), 
-        email=session.get("email"), 
-        password=session.get("password"))
+    return render_template("index.html", user=session.get("user").values)
 
 @app.route("/login", methods=METHODS)
 def login():
-    if session.get("email"):
+    if session.get("user"):
         flash("You are already logged in!")
         return redirect(url_for("myaccount"))
     if request.method == "POST":
@@ -73,11 +79,7 @@ def login():
         rememberme = request.form.get("rememberme")
         matching_user = User.query.filter_by(email=email).first()
         if matching_user and password == matching_user.pwd:
-            session["fname"] = matching_user.fname
-            session["lname"] = matching_user.lname
-            session["email"] = matching_user.email
-            session["password"] = matching_user.pwd
-            session["confirmation"] = matching_user.confirmation
+            session["user"] = matching_user.values
             set_session_timeout(rememberme)
             flash(f"Successfully Logged In as {matching_user.fname} {matching_user.lname}!")
             return redirect(url_for("index"))
@@ -87,15 +89,11 @@ def login():
         else:
             flash(f"Incorrect Username! Please try again!")
             return redirect(url_for("login"))
-    return render_template("login.html", 
-        fname=session.get("fname"), 
-        lname=session.get("lname"), 
-        email=session.get("email"), 
-        password=session.get("password"))
+    return render_template("login.html", user=session.get("user").values)
 
 @app.route("/register", methods=METHODS)
 def register():
-    if session.get("email"):
+    if session.get("user"):
         flash("You are already logged in!")
         return redirect(url_for("myaccount"))
     if request.method == "POST":
@@ -113,6 +111,7 @@ def register():
             newuser = User(fname=fname, lname=lname, email=email, pwd=password, confirmation=code)
             db.session.add(newuser)
             db.session.commit()
+            users = regenerate_users(User)
             msg = Message(
                 subject="Welcome to Find A Tutor!",
                 recipients=[email],
@@ -123,11 +122,7 @@ def register():
             mail.send(msg)
             flash("You have successfully been registered, Log In and check your email to verify!")
             return redirect(url_for("login"))
-    return render_template("register.html", 
-        fname=session.get("fname"), 
-        lname=session.get("lname"), 
-        email=session.get("email"), 
-        password=session.get("password"))
+    return render_template("register.html", user=session.get("user").values)
 
 @app.route("/logout")
 def logout():
@@ -137,13 +132,13 @@ def logout():
 
 @app.route("/myaccount", methods=METHODS)
 def myaccount():
-    if not session.get("email"):
+    if not session.get("user"):
         flash("Please Log In or Sign Up to access this page!")
         return redirect(url_for("index"))
     if request.method == "POST":
         fname = request.form.get("fname")
         lname = request.form.get("lname")
-        email = session["email"]
+        email = session["user"][3]
         oldpassword = request.form.get("oldpassword")
         password = request.form.get("password")
         matching_user = User.query.filter_by(email=email).first()
@@ -170,10 +165,16 @@ def myaccount():
                 matching_user.fname = fname
                 matching_user.lname = lname
                 matching_user.pwd = password if password else matching_user.pwd
+                matching_user.values = [
+                    matching_user.fname, 
+                    matching_user.lname, 
+                    matching_user.email, 
+                    matching_user.pwd, 
+                    matching_user.confirmation
+                ]
                 db.session.commit()
-                session["fname"] = fname
-                session["lname"] = lname
-                session["password"] = password if password else session["password"]
+                session["user"] = matching_user.values
+                users = regenerate_users(User)
                 flash("Your account info has been changed, a confirmation email has been sent!")
             else:
                 flash("No Profile Changes Detected!")
@@ -181,11 +182,11 @@ def myaccount():
         else:
             flash("Incorrect Old Password, please Reset Password or Try Again!")
             return redirect(url_for("myaccount"))
-    return render_template("myaccount.html", 
-        fname=session.get("fname"), 
-        lname=session.get("lname"), 
-        email=session.get("email"), 
-        password=session.get("password"))
+    return render_template("myaccount.html", user=session.get("user").values)
+
+@app.route("/request")
+def request():
+    return render_template("request.html", user=session.get("user").values, users=users)
 
 # TODO
 # Allow user to verify email by entering confirmation code
