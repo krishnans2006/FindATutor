@@ -226,9 +226,6 @@ def ask(id_):
         asker=User.query.filter_by(id_=session["user"][ID]).first(), 
         tutor=matching_user
     )
-    print("Requester:", newrequest.asker)
-    print("Tutor:", matching_user)
-    print("Sending email to", matching_user.email)
     db.session.add(newrequest)
     db.session.commit()
     msg = Message(

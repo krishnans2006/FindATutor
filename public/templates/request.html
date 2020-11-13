@@ -9,7 +9,7 @@
     <div id="list" class="list">
         {% for a_user in users %}
         {% if not a_user == user %}
-            <a href="/ask/{{user[0]}}" class="list-item-link">
+            <a href="/ask/{{a_user[0]}}" class="list-item-link">
                 <div class="list-item">
                     <h2><b>{{a_user[1]}} {{a_user[2]}}</b></h2>
                 </div>
