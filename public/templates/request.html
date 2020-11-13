@@ -8,9 +8,9 @@
 {% block content %}
     <div id="list" class="list">
         {% for user in users %}
-            <a href="/ask/{{user[0]}}">
+            <a href="/ask/{{user[0]}}" class="list-item-link">
                 <div class="list-item">
-                    <h2 class="list-item-text"><b>{{user[1]}} {{user[2]}}</b></h2>
+                    <h2><b>{{user[1]}} {{user[2]}}</b></h2>
                 </div>
             </a>
         {% endfor %}
