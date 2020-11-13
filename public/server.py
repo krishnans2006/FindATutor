@@ -66,7 +66,7 @@ def create_db():
 
 @app.route("/")
 def index():
-    return render_template("index.html", user=session.get("user").values)
+    return render_template("index.html", user=session.get("user"))
 
 @app.route("/login", methods=METHODS)
 def login():
@@ -89,7 +89,7 @@ def login():
         else:
             flash(f"Incorrect Username! Please try again!")
             return redirect(url_for("login"))
-    return render_template("login.html", user=session.get("user").values)
+    return render_template("login.html", user=session.get("user"))
 
 @app.route("/register", methods=METHODS)
 def register():
@@ -122,7 +122,7 @@ def register():
             mail.send(msg)
             flash("You have successfully been registered, Log In and check your email to verify!")
             return redirect(url_for("login"))
-    return render_template("register.html", user=session.get("user").values)
+    return render_template("register.html", user=session.get("user"))
 
 @app.route("/logout")
 def logout():
@@ -182,11 +182,11 @@ def myaccount():
         else:
             flash("Incorrect Old Password, please Reset Password or Try Again!")
             return redirect(url_for("myaccount"))
-    return render_template("myaccount.html", user=session.get("user").values)
+    return render_template("myaccount.html", user=session.get("user"))
 
 @app.route("/request")
 def request():
-    return render_template("request.html", user=session.get("user").values, users=users)
+    return render_template("request.html", user=session.get("user"), users=users)
 
 # TODO
 # Allow user to verify email by entering confirmation code
