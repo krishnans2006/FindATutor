@@ -38,7 +38,7 @@ class User(db.Model):
     email = db.Column(db.Text, unique=True, nullable=False)
     pwd = db.Column(db.Text, unique=True, nullable=False)
     confirmation = db.Column(db.Text)
-    values = [id_, fname, lname, email, pwd, confirmation]
+    values = [self.id_, self.fname, self.lname, self.email, self.pwd, self.confirmation]
 
     def __repr__(self):
         return f"{self.fname} {self.lname}"

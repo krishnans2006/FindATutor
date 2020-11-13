@@ -139,7 +139,7 @@
                 Find A Tutor</a>
         </div>
         <div id="rightnav">
-            {% if email %}
+            {% if user %}
             <a 
                 id="account-nav-element" 
                 class="nav-element link-nav-element" 
@@ -150,6 +150,7 @@
                 class="nav-element button-nav-element" 
                 href="/logout">
                 Log Out</a>
+            {% else %}
             <a 
                 id="login-nav-element" 
                 class="nav-element link-nav-element" 
