@@ -30,6 +30,12 @@ db = SQLAlchemy(app)
 mail = Mail(app)
 
 METHODS = ["GET", "POST"]
+ID = 0
+FNAME = 1
+LNAME = 2
+EMAIL = 3
+PWD = 4
+CONFIRMATION = 5
 
 class User(db.Model):
     id_ = db.Column("id", db.Integer, primary_key=True)
@@ -144,7 +150,7 @@ def myaccount():
     if request.method == "POST":
         fname = request.form.get("fname")
         lname = request.form.get("lname")
-        email = session["user"][3]
+        email = session["user"][EMAIL]
         oldpassword = request.form.get("oldpassword")
         password = request.form.get("password")
         matching_user = User.query.filter_by(email=email).first()

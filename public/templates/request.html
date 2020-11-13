@@ -7,6 +7,12 @@
 
 {% block content %}
     <div id="list" class="list">
-        {{users}}
+        {% for user in users %}
+            <a href="/ask/{{user[0]}}">
+                <div class="list-item">
+                    <h2><b>{{user[1]}} {{user[2]}}</b></h2>
+                </div>
+            </a>
+        {% endfor %}
     </div>
 {% endblock content %}
