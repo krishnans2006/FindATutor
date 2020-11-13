@@ -39,10 +39,10 @@ CONFIRMATION = 5
 
 class User(db.Model):
     id_ = db.Column("id", db.Integer, primary_key=True)
-    fname = db.Column(db.String(120), unique=True, nullable=False)
-    lname = db.Column(db.String(120), unique=True, nullable=False)
+    fname = db.Column(db.String(120), nullable=False)
+    lname = db.Column(db.String(120), nullable=False)
     email = db.Column(db.Text, unique=True, nullable=False)
-    pwd = db.Column(db.Text, unique=True, nullable=False)
+    pwd = db.Column(db.Text, nullable=False)
     confirmation = db.Column(db.Text)
 
     def __repr__(self):
