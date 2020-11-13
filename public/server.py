@@ -48,6 +48,17 @@ class User(db.Model):
     def __repr__(self):
         return f"{self.fname} {self.lname}"
 
+class Request(db.Model):
+    id_ = db.Column("id", db.Integer, primary_key=True)
+    asker_id = db.Column(d.Integer, db.ForeignKey("user.id"), nullable=False)
+    asker = db.relationship("User", backref=db.backref("posts", lazy=True))
+    tutor_id = db.Column(d.Integer, db.ForeignKey("user.id"), nullable=False)
+    tutor = db.relationship("User", backref=db.backref("posts", lazy=True))
+
+    def __repr__(self):
+        return f"{self.asker} requests {self.tutor}"
+    
+
 def set_session_timeout(remember):
     session.permanent = True
     if remember:
@@ -97,10 +108,10 @@ def login():
             flash(f"Successfully Logged In as {matching_user.fname} {matching_user.lname}!")
             return redirect(url_for("index"))
         elif matching_user:
-            flash(f"Incorrect Password! Please try again!")
+            flash(f"Incorrect Password! Please try again.")
             return redirect(url_for("login"))
         else:
-            flash(f"Incorrect Username! Please try again!")
+            flash(f"Incorrect Username! Please try again.")
             return redirect(url_for("login"))
     return render_template("login.html", user=session.get("user"))
 
@@ -116,8 +127,8 @@ def register():
         password = request.form.get("password")
         matching_user = User.query.filter_by(email=email).first()
         if matching_user:
-            flash(f"There is already an account with this email, " + 
-                "please Log In or use a different email!")
+            flash(f"There is already an account with this email! " + 
+                "Please Log In or use a different email.")
             return redirect(url_for("register"))
         else:
             code = "".join([choice(ascii_letters) for _ in range(6)])
@@ -133,7 +144,7 @@ def register():
                     f"Please do so by using the code '{code}'."
             )
             mail.send(msg)
-            flash("You have successfully been registered, Log In and check your email to verify!")
+            flash("You have successfully been registered! Log In and check your email to verify.")
             return redirect(url_for("login"))
     return render_template("register.html", user=session.get("user"))
 
@@ -188,12 +199,12 @@ def myaccount():
                     matching_user.confirmation
                 ]
                 users = regenerate_users(User)
-                flash("Your account info has been changed, a confirmation email has been sent!")
+                flash("Your account info has been changed! A confirmation email has been sent.")
             else:
                 flash("No Profile Changes Detected!")
             return redirect(url_for("myaccount"))
         else:
-            flash("Incorrect Old Password, please Reset Password or Try Again!")
+            flash("Incorrect Old Password! Please Reset Password or Try Again.")
             return redirect(url_for("myaccount"))
     return render_template("myaccount.html", user=session.get("user"))
 
@@ -211,15 +222,22 @@ def ask(id_):
         flash("Please Log In or Sign Up to access this page!")
         return redirect(url_for("index"))
     matching_user = User.query.filter_by(id_=id_).first()
+    newrequest = Request(
+        asker=User.query.filter_by(id_=session["user"][ID]).first(), 
+        tutor=matching_user
+    )
+    db.session.add(newrequest)
+    db.commit()
     msg = Message(
         subject=f"Request for Tutoring from {session['user'][FNAME]} {session['user'][LNAME]}", 
         recipients=[matching_user.email], 
-        html=f"You have a new tutor request from {session['user'][FNAME]} {session['user'][LNAME]}" +
-        "Go to your tutoring page on Find My Tutor to view all your requests for tutoring."
+        html=f"{session['user'][FNAME]} {session['user'][LNAME]} requested tutoring! " +
+        "Go to your tutoring page on Find My Tutor to view all your requests for tutoring. " + 
+        f"DEBUGGING: {newrequest}"
     )
     mail.send(msg)
-    flash("Your request for tutoring has been successfully submitted!" + 
-    "If the tutor accepts your request, you will get an email that lets you contact your tutor!")
+    flash("Your request for tutoring has been successfully submitted! " + 
+    "If the tutor accepts your request, you will get an email with their contact info.")
     return redirect(url_for("request_page"))
 
 # TODO
