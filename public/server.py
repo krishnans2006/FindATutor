@@ -50,9 +50,9 @@ class User(db.Model):
 
 class Request(db.Model):
     id_ = db.Column("id", db.Integer, primary_key=True)
-    asker_id = db.Column(d.Integer, db.ForeignKey("user.id"), nullable=False)
+    asker_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     asker = db.relationship("User", backref=db.backref("posts", lazy=True))
-    tutor_id = db.Column(d.Integer, db.ForeignKey("user.id"), nullable=False)
+    tutor_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     tutor = db.relationship("User", backref=db.backref("posts", lazy=True))
 
     def __repr__(self):
