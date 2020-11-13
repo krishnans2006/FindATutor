@@ -199,8 +199,28 @@ def myaccount():
 
 @app.route("/request")
 def request_page():
+    if not session.get("user"):
+        flash("Please Log In or Sign Up to access this page!")
+        return redirect(url_for("index"))
     users = regenerate_users(User)
     return render_template("request.html", user=session.get("user"), users=users)
+
+@app.route("/ask/<int:id>")
+def ask(id_):
+    if not session.get("user"):
+        flash("Please Log In or Sign Up to access this page!")
+        return redirect(url_for("index"))
+    matching_user = User.query.filter_by(id_=id_).first()
+    msg = Message(
+        subject=f"Request for Tutoring from {session['user'][FNAME]} {session['user'][LNAME]}", 
+        recipients=[matching_user.email], 
+        html=f"You have a new tutor request from {session['user'][FNAME]} {session['user'][LNAME]}" +
+        "Go to your tutoring page on Find My Tutor to view all your requests for tutoring."
+    )
+    mail.send(msg)
+    flash("Your request for tutoring has been successfully submitted!" + 
+    "If the tutor accepts your request, you will get an email that lets you contact your tutor!")
+    return redirect(url_for("request_page"))
 
 # TODO
 # Allow user to verify email by entering confirmation code
