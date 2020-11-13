@@ -205,7 +205,7 @@ def request_page():
     users = regenerate_users(User)
     return render_template("request.html", user=session.get("user"), users=users)
 
-@app.route("/ask/<int:id>")
+@app.route("/ask/<int:id_>")
 def ask(id_):
     if not session.get("user"):
         flash("Please Log In or Sign Up to access this page!")
