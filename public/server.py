@@ -199,6 +199,7 @@ def myaccount():
 
 @app.route("/request")
 def request_page():
+    users = regenerate_users(User)
     return render_template("request.html", user=session.get("user"), users=users)
 
 # TODO
