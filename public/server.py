@@ -38,7 +38,6 @@ class User(db.Model):
     email = db.Column(db.Text, unique=True, nullable=False)
     pwd = db.Column(db.Text, unique=True, nullable=False)
     confirmation = db.Column(db.Text)
-    values = [self.id_, self.fname, self.lname, self.email, self.pwd, self.confirmation]
 
     def __repr__(self):
         return f"{self.fname} {self.lname}"
@@ -55,7 +54,7 @@ def regenerate_users(user):
     queried = user.query.all()
     users = []
     for user in queried:
-        users.append(user.values)
+        users.append([user._id, user.fname, user.lname, user.email, user.pwd, user.confirmation])
     return users
 
 users = regenerate_users(User)
@@ -79,7 +78,14 @@ def login():
         rememberme = request.form.get("rememberme")
         matching_user = User.query.filter_by(email=email).first()
         if matching_user and password == matching_user.pwd:
-            session["user"] = matching_user.values
+            session["user"] = [
+                matching_user._id, 
+                matching_user.fname, 
+                matching_user.lname, 
+                matching_user.email, 
+                matching_user.pwd, 
+                matching_user.confirmation
+            ]
             set_session_timeout(rememberme)
             flash(f"Successfully Logged In as {matching_user.fname} {matching_user.lname}!")
             return redirect(url_for("index"))
@@ -165,15 +171,15 @@ def myaccount():
                 matching_user.fname = fname
                 matching_user.lname = lname
                 matching_user.pwd = password if password else matching_user.pwd
-                matching_user.values = [
+                db.session.commit()
+                session["user"] = [
+                    matching_user._id, 
                     matching_user.fname, 
                     matching_user.lname, 
                     matching_user.email, 
                     matching_user.pwd, 
                     matching_user.confirmation
                 ]
-                db.session.commit()
-                session["user"] = matching_user.values
                 users = regenerate_users(User)
                 flash("Your account info has been changed, a confirmation email has been sent!")
             else:
