@@ -63,11 +63,12 @@ def regenerate_users(user):
         users.append([user.id_, user.fname, user.lname, user.email, user.pwd, user.confirmation])
     return users
 
-users = regenerate_users(User)
-
 @app.before_first_request
 def create_db():
     db.create_all()
+
+create_db()
+users = regenerate_users(User)
 
 @app.route("/")
 def index():
