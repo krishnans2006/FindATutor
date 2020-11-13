@@ -227,7 +227,7 @@ def ask(id_):
         tutor=matching_user
     )
     db.session.add(newrequest)
-    db.commit()
+    db.session.commit()
     msg = Message(
         subject=f"Request for Tutoring from {session['user'][FNAME]} {session['user'][LNAME]}", 
         recipients=[matching_user.email], 
