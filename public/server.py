@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
 
-from datetime import now, timedelta
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from random import choice
 from string import ascii_letters
@@ -224,7 +224,7 @@ def ask(id_):
         return redirect(url_for("index"))
     matching_user = User.query.filter_by(id_=id_).first()
     newrequest = Request(
-        datetime=now(), 
+        datetime=datetime.now(), 
         asker=User.query.filter_by(id_=session["user"][ID]).first(), 
         tutor=matching_user
     )
