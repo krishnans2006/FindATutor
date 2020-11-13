@@ -191,7 +191,7 @@ def myaccount():
     return render_template("myaccount.html", user=session.get("user"))
 
 @app.route("/request")
-def request():
+def request_page():
     return render_template("request.html", user=session.get("user"), users=users)
 
 # TODO
