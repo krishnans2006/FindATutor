@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
 
-from datetime import timedelta
+from datetime import now, timedelta
 from dotenv import load_dotenv
 from random import choice
 from string import ascii_letters
@@ -50,6 +50,7 @@ class User(db.Model):
 
 class Request(db.Model):
     id_ = db.Column("id", db.Integer, primary_key=True)
+    datetime = db.Column(db.DateTime, nullable=False)
     asker_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     asker = db.relationship("User", foreign_keys=[asker_id])
     tutor_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
@@ -223,6 +224,7 @@ def ask(id_):
         return redirect(url_for("index"))
     matching_user = User.query.filter_by(id_=id_).first()
     newrequest = Request(
+        datetime=now(), 
         asker=User.query.filter_by(id_=session["user"][ID]).first(), 
         tutor=matching_user
     )
@@ -232,8 +234,7 @@ def ask(id_):
         subject=f"Request for Tutoring from {session['user'][FNAME]} {session['user'][LNAME]}", 
         recipients=[matching_user.email], 
         html=f"{session['user'][FNAME]} {session['user'][LNAME]} requested tutoring! " +
-        "Go to your tutoring page on Find My Tutor to view all your requests for tutoring. " + 
-        f"DEBUGGING: {newrequest}"
+        "Go to your tutoring page on Find My Tutor to view all your requests for tutoring. "
     )
     mail.send(msg)
     flash("Your request for tutoring has been successfully submitted! " + 
