@@ -169,7 +169,7 @@ def myaccount():
         email = session["user"].email
         oldpassword = request.form.get("oldpassword")
         password = request.form.get("password")
-        matching_user = User.query.filter_by(email=email).first()
+        matching_user = session["user"]
         if matching_user.pwd == oldpassword:
             changes = []
             change_made = False
@@ -221,7 +221,7 @@ def ask(id_):
     matching_user = User.query.filter_by(id_=id_).first()
     newrequest = Request(
         datetime=datetime.now(), 
-        asker=User.query.filter_by(id_=session["user"][ID]).first(), 
+        asker=session["user"], 
         tutor=matching_user
     )
     db.session.add(newrequest)
@@ -243,7 +243,7 @@ def my_requests():
         flash("Please Log In or Sign Up to access this page!")
         return redirect(url_for("index"))
     users, requests = regenerate_tables(User, Request)
-    me = User.query.filter_by(id_=session["user"][ID]).first()
+    me = session["user"]
     requests = me.requests
     requested = me.requested
     return render_template(
