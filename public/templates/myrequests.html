@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Request Tutoring - Find A Tutor!{% endblock title %}
+
+{% block css %}
+{% endblock css %}
+
+{% block content %}
+    <div id="list" class="list-item">
+        <h2>Currently Requesting Tutoring From:</h2>
+        {% for a_request in requests %}
+            <div class="list-item list-item-white">
+                <h2><b>{{a_request[1]}} {{a_request[2]}}</b></h2>
+            </div>
+        {% endfor %}
+    </div>
+    <div id="list" class="list-item">
+        <h2>People who have requested your tutoring:</h2>
+        {% for a_request in requested %}
+            <div class="list-item list-item-white">
+                <h2><b>{{a_request[1]}} {{a_request[2]}}</b></h2>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock content %}

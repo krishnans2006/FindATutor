@@ -52,9 +52,15 @@ class Request(db.Model):
     id_ = db.Column("id", db.Integer, primary_key=True)
     datetime = db.Column(db.DateTime, nullable=False)
     asker_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    asker = db.relationship("User", foreign_keys=[asker_id])
+    asker = db.relationship(
+        "User", 
+        foreign_keys=[asker_id],
+        backref=db.backref('requests', lazy=True))
     tutor_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    tutor = db.relationship("User", foreign_keys=[tutor_id])
+    tutor = db.relationship(
+        "User", 
+        foreign_keys=[tutor_id],
+        backref=db.backref('requested', lazy=True))
 
     def __repr__(self):
         return f"{self.asker} requests {self.tutor}"
@@ -68,19 +74,23 @@ def set_session_timeout(remember):
         app.permanent_session_lifetime = timedelta(minutes=20)
     session.modified = True
 
-def regenerate_users(user):
-    queried = user.query.all()
+def regenerate_tables(user, request):
+    users_query = user.query.all()
     users = []
-    for user in queried:
+    for user in users_query:
         users.append([user.id_, user.fname, user.lname, user.email, user.pwd, user.confirmation])
-    return users
+    requests_query = request.query.all()
+    requests = []
+    for request in requests_query:
+        requests.append([request.id_, request.asker_id, request.tutor_id])
+    return users, requests
 
 @app.before_first_request
 def create_db():
     db.create_all()
 
 create_db()
-users = regenerate_users(User)
+users, requests = regenerate_tables(User, Request)
 
 @app.route("/")
 def index():
@@ -136,7 +146,7 @@ def register():
             newuser = User(fname=fname, lname=lname, email=email, pwd=password, confirmation=code)
             db.session.add(newuser)
             db.session.commit()
-            users = regenerate_users(User)
+            users, requests = regenerate_tables(User, Request)
             msg = Message(
                 subject="Welcome to Find A Tutor!",
                 recipients=[email],
@@ -199,7 +209,7 @@ def myaccount():
                     matching_user.pwd, 
                     matching_user.confirmation
                 ]
-                users = regenerate_users(User)
+                users, requests = regenerate_tables(User, Request)
                 flash("Your account info has been changed! A confirmation email has been sent.")
             else:
                 flash("No Profile Changes Detected!")
@@ -214,7 +224,7 @@ def request_page():
     if not session.get("user"):
         flash("Please Log In or Sign Up to access this page!")
         return redirect(url_for("index"))
-    users = regenerate_users(User)
+    users, requests = regenerate_tables(User, Request)
     return render_template("request.html", user=session.get("user"), users=users)
 
 @app.route("/ask/<int:id_>")
@@ -241,19 +251,27 @@ def ask(id_):
     "If the tutor accepts your request, you will get an email with their contact info.")
     return redirect(url_for("request_page"))
 
+@app.route("/myrequests")
+def my_requests:
+    if not session.get("user"):
+        flash("Please Log In or Sign Up to access this page!")
+        return redirect(url_for("index"))
+    users, requests = regenerate_tables(User, Request)
+    me = User.query.filter_by(id_=session["user"][ID]).first()
+    requests = me.requests
+    requested = me.requested
+    return render_template("myrequests.html", requests=requests, requested=requested)
+
 # TODO
 # Allow user to verify email by entering confirmation code
     # Verification: Query database for value of confirm_status and check if it matches code entered
-# Add list of users - in new page
+    # https://stackoverflow.com/questions/4582264/python-sqlalchemy-order-by-datetime
 # Let user select subjects they can Tutor
     # Add new column in DB for CSV of tutorable subjects
     # Let user check all subjects they can tutor when signing up
     # Display tutorable subjects on list of users page
     # IF TIME PERMITS: Add sorting feature to sort tutors by certain tutorable subjects
 # Allow tutoring to occur
-    # Allow a user to request tutoring from another user
-        # User can click "Request" button on list of users page
-    # Send the tutor an email that their service has been requested
     # Allow the tutor to accept or decline tutoring offer
         # Link in email takes the tutor to a "Tutoring Requests" page
             # Tutor can accept or reject tutoring requests here

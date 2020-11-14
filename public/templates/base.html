@@ -138,7 +138,11 @@
 		}
 		
 		.list-item:hover {
-		    background-color: #f5f5f2;
+		    background-color: #e2e2e2;
+		}
+		
+		.list-item-white {
+		    background-color: white;
 		}
 		
 		.list-item-link {
@@ -163,11 +167,18 @@
 	<div id="nav">
 		<div id="leftnav">
 			<a id="main-nav-element" class="nav-element" href="/"><b>Find A Tutor</b></a>
+			{% if user %}
             <a 
                 id="request-nav-element" 
                 class="nav-element link-nav-element" 
                 href="/request">
                 Request Tutoring</a>
+            <a 
+                id="requested-nav-element" 
+                class="nav-element link-nav-element" 
+                href="/myrequests">
+                Current Requests</a>
+            {% endif %}
         </div>
         <div id="rightnav">
             {% if user %}
