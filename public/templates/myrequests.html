@@ -19,8 +19,8 @@
         {% for a_request in requested %}
             <div class="list-item list-item-white">
                 <h2><b>{{a_request.asker}}</b></h2>
-                <i class="far fa-check-circle"><a href="/accept/{{a_request.id_}}"></a></i>
-                <i class="far fa-times-circle"><a href="/decline/{{a_request.id_}}"></a></i>
+                <a href="/accept/{{a_request.id_}}"><i class="far fa-check-circle"></i>  Accept</a>
+                <a href="/decline/{{a_request.id_}}"><i class="far fa-times-circle"></i>  Decline</a>
             </div>
         {% endfor %}
     </div>
