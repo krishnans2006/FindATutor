@@ -260,7 +260,11 @@ def my_requests():
     me = User.query.filter_by(id_=session["user"][ID]).first()
     requests = me.requests
     requested = me.requested
-    return render_template("myrequests.html", requests=requests, requested=requested)
+    return render_template(
+        "myrequests.html", 
+        user=session.get("user"), 
+        requests=requests, 
+        requested=requested)
 
 # TODO
 # Allow user to verify email by entering confirmation code
