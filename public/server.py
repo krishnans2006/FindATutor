@@ -61,6 +61,7 @@ class Request(db.Model):
         "User", 
         foreign_keys=[tutor_id],
         backref=db.backref('requested', lazy=True))
+    accepted = db.Column(db.Boolean)
 
     def __repr__(self):
         return f"{self.asker} requests {self.tutor}"
