@@ -6,19 +6,19 @@
 {% endblock css %}
 
 {% block content %}
-    <div id="list" class="list-item">
+    <div id="list" class="list list-item">
         <h2>Currently Requesting Tutoring From:</h2>
         {% for a_request in requests %}
             <div class="list-item list-item-white">
-                <h2><b>{{a_request}}</b></h2>
+                <h2><b>{{a_request.tutor}}</b></h2>
             </div>
         {% endfor %}
     </div>
-    <div id="list" class="list-item">
+    <div id="list" class="list list-item">
         <h2>People who have requested your tutoring:</h2>
         {% for a_request in requested %}
             <div class="list-item list-item-white">
-                <h2><b>{{a_request[1]}} {{a_request[2]}}</b></h2>
+                <h2><b>{{a_request.asker}}</b></h2>
             </div>
         {% endfor %}
     </div>
