@@ -167,7 +167,7 @@
 	<div id="nav">
 		<div id="leftnav">
 			<a id="main-nav-element" class="nav-element" href="/"><b>Find A Tutor</b></a>
-			{% if user %}
+			{% if user[0] %}
             <a 
                 id="request-nav-element" 
                 class="nav-element link-nav-element" 
@@ -181,7 +181,7 @@
             {% endif %}
         </div>
         <div id="rightnav">
-            {% if user %}
+            {% if user[0] %}
             <a 
                 id="account-nav-element" 
                 class="nav-element link-nav-element" 

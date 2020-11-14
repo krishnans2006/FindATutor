@@ -94,7 +94,7 @@ users, requests = regenerate_tables(User, Request)
 
 @app.route("/")
 def index():
-    return render_template("index.html", user=session.get("user"))
+    return render_template("index.html", user=[session.get("user")])
 
 @app.route("/login", methods=METHODS)
 def login():
@@ -107,14 +107,7 @@ def login():
         rememberme = request.form.get("rememberme")
         matching_user = User.query.filter_by(email=email).first()
         if matching_user and password == matching_user.pwd:
-            session["user"] = [
-                matching_user.id_, 
-                matching_user.fname, 
-                matching_user.lname, 
-                matching_user.email, 
-                matching_user.pwd, 
-                matching_user.confirmation
-            ]
+            session["user"] = matching_user
             set_session_timeout(rememberme)
             flash(f"Successfully Logged In as {matching_user.fname} {matching_user.lname}!")
             return redirect(url_for("index"))
@@ -124,7 +117,7 @@ def login():
         else:
             flash(f"Incorrect Username! Please try again.")
             return redirect(url_for("login"))
-    return render_template("login.html", user=session.get("user"))
+    return render_template("login.html", user=[session.get("user")])
 
 @app.route("/register", methods=METHODS)
 def register():
@@ -157,7 +150,7 @@ def register():
             mail.send(msg)
             flash("You have successfully been registered! Log In and check your email to verify.")
             return redirect(url_for("login"))
-    return render_template("register.html", user=session.get("user"))
+    return render_template("register.html", user=[session.get("user")])
 
 @app.route("/logout")
 def logout():
@@ -173,7 +166,7 @@ def myaccount():
     if request.method == "POST":
         fname = request.form.get("fname")
         lname = request.form.get("lname")
-        email = session["user"][EMAIL]
+        email = session["user"].email
         oldpassword = request.form.get("oldpassword")
         password = request.form.get("password")
         matching_user = User.query.filter_by(email=email).first()
@@ -193,7 +186,7 @@ def myaccount():
                 changes = "<br>".join(changes)
                 msg = Message(
                     subject="Find A Tutor: Changes to your Account",
-                    recipients=[session["email"]],
+                    recipients=[session["user"].email],
                     html="Changes were made to your account:<br><ul>" + changes + "</ul>"
                 )
                 mail.send(msg)
@@ -201,14 +194,7 @@ def myaccount():
                 matching_user.lname = lname
                 matching_user.pwd = password if password else matching_user.pwd
                 db.session.commit()
-                session["user"] = [
-                    matching_user.id_, 
-                    matching_user.fname, 
-                    matching_user.lname, 
-                    matching_user.email, 
-                    matching_user.pwd, 
-                    matching_user.confirmation
-                ]
+                session["user"] = matching_user
                 users, requests = regenerate_tables(User, Request)
                 flash("Your account info has been changed! A confirmation email has been sent.")
             else:
@@ -217,7 +203,7 @@ def myaccount():
         else:
             flash("Incorrect Old Password! Please Reset Password or Try Again.")
             return redirect(url_for("myaccount"))
-    return render_template("myaccount.html", user=session.get("user"))
+    return render_template("myaccount.html", user=[session.get("user")])
 
 @app.route("/request")
 def request_page():
@@ -225,7 +211,7 @@ def request_page():
         flash("Please Log In or Sign Up to access this page!")
         return redirect(url_for("index"))
     users, requests = regenerate_tables(User, Request)
-    return render_template("request.html", user=session.get("user"), users=users)
+    return render_template("request.html", user=[session.get("user")], users=users)
 
 @app.route("/ask/<int:id_>")
 def ask(id_):
@@ -262,7 +248,7 @@ def my_requests():
     requested = me.requested
     return render_template(
         "myrequests.html", 
-        user=session.get("user"), 
+        user=[session.get("user")], 
         requests=requests, 
         requested=requested)
 

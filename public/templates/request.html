@@ -8,7 +8,7 @@
 {% block content %}
     <div id="list" class="list">
         {% for a_user in users %}
-        {% if not a_user == user %}
+        {% if not a_user == user[0] %}
             <a href="/ask/{{a_user[0]}}" class="list-item-link">
                 <div class="list-item">
                     <h2><b>{{a_user[1]}} {{a_user[2]}}</b></h2>
