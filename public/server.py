@@ -252,7 +252,7 @@ def ask(id_):
     return redirect(url_for("request_page"))
 
 @app.route("/myrequests")
-def my_requests:
+def my_requests():
     if not session.get("user"):
         flash("Please Log In or Sign Up to access this page!")
         return redirect(url_for("index"))
