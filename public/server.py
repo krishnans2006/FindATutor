@@ -83,7 +83,7 @@ def regenerate_tables(user, request):
     requests_query = request.query.all()
     requests = []
     for request in requests_query:
-        requests.append([request.id_, request.asker_id, request.tutor_id, accepted])
+        requests.append([request.id_, request.asker_id, request.tutor_id, request.accepted])
     return users, requests
 
 @app.before_first_request
