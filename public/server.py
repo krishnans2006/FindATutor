@@ -83,7 +83,7 @@ def regenerate_tables(user, request):
     requests_query = request.query.all()
     requests = []
     for request in requests_query:
-        requests.append([request.id_, request.asker_id, request.tutor_id])
+        requests.append([request.id_, request.asker_id, request.tutor_id, accepted])
     return users, requests
 
 @app.before_first_request
@@ -259,13 +259,32 @@ def my_requests():
         return redirect(url_for("index"))
     users, requests = regenerate_tables(User, Request)
     me = User.query.filter_by(id_=session["user"][ID]).first()
-    requests = me.requests
+    my_requests = me.requests
     requested = me.requested
     return render_template(
         "myrequests.html", 
         user=session.get("user"), 
-        requests=requests, 
+        requests=my_requests, 
         requested=requested)
+
+@app.route("/accept/<int:id_>")
+def accept(id_):
+    if not session.get("user"):
+        flash("Please Log In or Sign Up to access this page!")
+        return redirect(url_for("index"))
+    matching_request = Request.query.filter_by(id_=id_).first()
+    matching_request.accepted = True
+    msg = Message(
+        subject=f"Request for Tutoring accepted by {session['user'][FNAME]} {session['user'][LNAME]}", 
+        recipients=[matching_request.asker.email], 
+        html=f"{session['user'][FNAME]} {session['user'][LNAME]} has accepted your tutoring request! " +
+        f"Contact them by <a href='mailto:{session['user'].email}'>email</a> to start learning."
+    )
+    mail.send(msg)
+    flash("You have now accepted this tutoring request! " + 
+    "Please wait for the tutor requester to contact you by email.")
+    return redirect(url_for("my_requests"))
+    
 
 # TODO
 # Allow user to verify email by entering confirmation code
