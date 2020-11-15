@@ -278,7 +278,7 @@ def accept(id_):
         subject=f"Request for Tutoring accepted by {session['user'][FNAME]} {session['user'][LNAME]}", 
         recipients=[matching_request.asker.email], 
         html=f"{session['user'][FNAME]} {session['user'][LNAME]} has accepted your tutoring request! " +
-        f"Contact them by <a href='mailto:{session['user'].email}'>email</a> to start learning."
+        f"Contact them by <a href='mailto:{session['user'][EMAIL]}'>email</a> to start learning."
     )
     mail.send(msg)
     flash("You have now accepted this tutoring request! " + 
