@@ -284,6 +284,25 @@ def accept(id_):
     flash("You have now accepted this tutoring request! " + 
     "Please wait for the tutor requester to contact you by email.")
     return redirect(url_for("my_requests"))
+
+@app.route("/reject/<int:id_>")
+def reject(id_):
+    if not session.get("user"):
+        flash("Please Log In or Sign Up to access this page!")
+        return redirect(url_for("index"))
+    matching_request = Request.query.filter_by(id_=id_).first()
+    db.session.delete(matching_request)
+    db.session.commit()
+    msg = Message(
+        subject=f"Request for Tutoring rejected by {session['user'][FNAME]} {session['user'][LNAME]}", 
+        recipients=[matching_request.asker.email], 
+        html=f"{session['user'][FNAME]} {session['user'][LNAME]} has rejected your tutoring request! " +
+        f"Contact them by <a href='mailto:{session['user'][EMAIL]}'>email</a> to start learning."
+    )
+    mail.send(msg)
+    flash("You have now rejected this tutoring request! " + 
+    "The tutor requester has now been emailed")
+    return redirect(url_for("my_requests"))
     
 
 # TODO
